@@ -1,0 +1,36 @@
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Listado de Productos</h1>
+  
+  {{#if products.length}}
+    <div class="row">
+      {{#each products}}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{this.title}}</h5>
+              <p class="card-text">
+                <strong>ID:</strong> {{this.id}}<br>
+                <strong>Precio:</strong> ${{this.price}}<br>
+                <strong>Stock:</strong> {{this.stock}}<br>
+                <strong>Categoría:</strong> {{this.category}}
+              </p>
+            </div>
+            <div class="card-footer bg-transparent">
+              <small class="text-muted">Código: {{this.code}}</small>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="alert alert-warning text-center">
+      No hay productos disponibles. Agrega uno desde <a href="/realtimeproducts">RealTimeProducts</a>.
+    </div>
+  {{/if}}
+
+  <div class="text-center mt-4">
+    <a href="/realtimeproducts" class="btn btn-primary btn-lg">
+      Ir a Productos en Tiempo Real
+    </a>
+  </div>
+</div>
