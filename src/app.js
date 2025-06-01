@@ -9,6 +9,8 @@ const cartsRouter = require('./routes/carts.router');
 const ProductManager = require('./managers/ProductManager');
 const { title } = require('process');
 const productManager = new ProductManager();
+const connectionDB = require('./data/dataBase');
+connectionDB(); 
 
 const app = express();
 
@@ -19,7 +21,6 @@ app.engine('handlebars', exphbs.engine({
 }));
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,7 +46,7 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('deleteProduct', async (id) => {
-    await productManager.deleteProduct(Number(id));
+    await productManager.deleteProduct(id); // Quita Number()
     const productosActualizados = await productManager.getProducts();
     io.emit('updateProducts', productosActualizados);
   });
@@ -55,7 +56,7 @@ const PORT = 8081;
 httpServer.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-//prueba
+
 
 
 

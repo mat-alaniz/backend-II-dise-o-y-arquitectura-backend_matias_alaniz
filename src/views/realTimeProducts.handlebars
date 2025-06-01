@@ -24,14 +24,14 @@
 </div>
 <ul id="productsList" class="list-group mb-4">
     {{#each products}}
-    <li class="list-group-item" data-id="{{this.id}}">
+    <li class="list-group-item" data-id="{{this._id}}">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h5>{{this.title}}</h5>
                 <p class="mb-1">{{this.description}}</p>
-                <small class="text-muted">Precio: ${{this.price}} | ID: {{this.id}}</small>
+                <small class="text-muted">Precio: ${{this.price}} | ID: {{this._id}}</small>
             </div>
-            <button class="btn btn-danger btn-sm delete-btn" data-id="{{this.id}}">
+            <button class="btn btn-danger btn-sm delete-btn" data-id="{{this._id}}">
                 Eliminar
             </button>
         </div>
@@ -109,14 +109,14 @@
     socket.on('updateProducts', (products) => {
         const productsList = document.getElementById('productsList');
         productsList.innerHTML = products.map(product => `
-            <li class="list-group-item" data-id="${product.id}">
+            <li class="list-group-item" data-id="${product._id}">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h5>${product.title}</h5>
                         <p class="mb-1">${product.description}</p>
-                        <small class="text-muted">Precio: $${product.price} | ID: ${product.id}</small>
+                        <small class="text-muted">Precio: $${product.price} | ID: ${product._id}</small>
                     </div>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="${product.id}">
+                    <button class="btn btn-danger btn-sm delete-btn" data-id="${product._id}">
                         Eliminar
                     </button>
                 </div>

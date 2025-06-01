@@ -5,8 +5,9 @@ const productManager = new ProductManager();
 
 router.get('/', async (req, res) => {
     try {
-        const products = await productManager.getProducts();
-        res.json(products);
+        const { limit } = req.query;
+        const products = await productManager.getProducts(limit);
+        res.status(200).json({ message: 'Lista de productos', products });
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener los productos' });
     }
@@ -14,12 +15,12 @@ router.get('/', async (req, res) => {
 
 router.get('/:pid', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid);
-        const product = await productManager.getProductById(id);
-        if (!product) {
+      const { pid } = req.params;
+       const productId = await productManager.getProductById( pid )
+        if (!productId) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
-        res.json(product);
+        res.status(200).json({ message: 'Producto encontrado', product: productId });
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener el producto' });
     }
@@ -27,20 +28,9 @@ router.get('/:pid', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { title, description, code, price, stock, category, thumbnail } = req.body;
-        if (!title || !description || !code || !price || !stock || !category) {
-            return res.status(400).json({ error: 'Faltan datos requeridos' });
-        }
-        const newProduct = await productManager.addProduct({
-            title,
-            description,
-            code,
-            price,
-            stock,
-            category,
-            thumbnail: thumbnail || [],
-        });
-        res.status(201).json(newProduct);
+      const { title, description, price, code, stock } = req.body;
+      const newProduct = await productManager.saveProducts({ title, description, price, code, stock });
+      res.status(201).json({ message: 'Producto creado', product: newProduct });
     } catch (error) {
         res.status(500).json({ error: 'Error al crear el producto' });
     }
@@ -48,13 +38,13 @@ router.post('/', async (req, res) => {
 
 router.put('/:pid', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid);
-        const updateData = req.body;
-        const updatedProduct = await productManager.updateProduct(id, updateData);
-        if (!updatedProduct) {
-            return res.status(404).json({ error: 'Producto no encontrado para ser actualizado' });
-        }
-        res.json(updatedProduct);
+      const { pid } = req.params;
+      const { title, description, price, code, stock } = req.body;
+      const updatedProduct = await productManager.updateProduct(pid, { title, description, price, code, stock });
+      if (!updatedProduct) {
+          return res.status(404).json({ error: 'Producto no encontrado para ser actualizado' });
+      }
+      res.status(200).json({ message: 'Producto actualizado', product: updatedProduct });
     } catch (error) {
         res.status(500).json({ error: 'Error al actualizar el producto' });
     }
@@ -62,12 +52,12 @@ router.put('/:pid', async (req, res) => {
 
 router.delete('/:pid', async (req, res) => {
     try {
-        const id = parseInt(req.params.pid); 
-        const deleted = await productManager.deleteProduct(id);
-        if (!deleted) {
+        const { pid } = req.params;
+        const deletedProduct = await productManager.deleteProduct(pid);
+        if (!deletedProduct) {
             return res.status(404).json({ error: 'Producto no encontrado para ser eliminado' });
         }
-        res.json({ message: 'Producto eliminado' });
+        res.status(200).json({ message: 'Producto eliminado' });
     } catch (error) {
         res.status(500).json({ error: 'Error al eliminar el producto' });
     }
