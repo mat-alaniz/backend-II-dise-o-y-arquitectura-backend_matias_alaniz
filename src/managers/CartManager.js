@@ -23,7 +23,7 @@ class CartManager {
 
     async getCartById(cartId) {
         try {
-            return await modeloCart.findById(cartId).populate('products.productId');
+            return await modeloCart.findById(cartId).populate({ path: 'products.productId', model: modeloProduct }).lean();
         } catch (error) {
             console.error('Error obteniendo el carrito por ID:', error);
             return null;
