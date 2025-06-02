@@ -6,10 +6,11 @@ const getProducts = async (req, res) => {
         const { limit = 10, page = 1, sort, query } = req.query;
         const filter ={};
         if (query) {
-            filter.$or = [
-                { category: query },
-                { status: query === 'available' }
-            ];
+           if (query === 'available') {
+                filter.stock = { $gt: 0 };
+            } else {
+                filter.category = query;
+            }
         }
         const options = {
             limit: parseInt(limit),
@@ -19,9 +20,15 @@ const getProducts = async (req, res) => {
         };
         const result = await product.paginate(filter, options);
 
-        const baseUrl = `${req.protocol}://${req.get('host')}/api/products`;
-        const prevLink = result.hasPrevPage ? `${baseUrl}?page=${result.prevPage}&limit=${limit}` : null;
-        const nextLink = result.hasNextPage ? `${baseUrl}?page=${result.nextPage}&limit=${limit}` : null;
+        const buildLink = (page) => {
+            const params = new URLSearchParams();
+            params.append('limit', limit);
+            params.append('page', page);
+            if (sort) params.append('sort', sort);
+            if (query) params.append('query', query);
+            return `${req.protocol}://${req.get('host')}/api/products?${params.toString()}`;
+        }
+        
         res.status(200).json({
             status: 'success',
             payload: result.docs,
@@ -31,11 +38,11 @@ const getProducts = async (req, res) => {
             page: result.page,
             hasPrevPage: result.hasPrevPage,
             hasNextPage: result.hasNextPage,
-            prevLink,
-            nextLink 
+            prevLink: result.hasPrevPage ? buildLink(result.prevPage) : null,
+            nextLink: result.hasNextPage ? buildLink(result.nextPage) : null
         });
     } catch (error) {
-        res.status(500).json({status: 'error',message: error.message});
+        res.status(500).json({status: 'error',message: 'Internal Server Error', error: process.env.NODE_ENV === 'development' ? error.message : null});
     }
 }
 
