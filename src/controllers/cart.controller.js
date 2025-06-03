@@ -51,7 +51,7 @@ const updateProductQuantity = async (req, res) => {
     }       
 };
 
-const updatedCart = async (req, res) => {
+const updateCart = async (req, res) => {
     try {
         const { cid } = req.params;
         const { products } = req.body;
@@ -91,6 +91,6 @@ const clearCart = async (req, res) => {
 module.exports = {
     deleteProductFromCart,
     updateProductQuantity,
-    updatedCart,
+    updateCart,
     clearCart   
 };
