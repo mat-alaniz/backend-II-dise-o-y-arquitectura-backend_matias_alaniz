@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const cartSchema = new mongoose.Schema({
     products: [{
         productId: {
@@ -14,6 +15,11 @@ const cartSchema = new mongoose.Schema({
     }]
   
 }, { timestamps: true });
+
+cartSchema.methods.clearCart = function() {
+    this.products = [];
+    return this.save();
+};
 
 const Cart = mongoose.model('Cart', cartSchema);
 module.exports = Cart;

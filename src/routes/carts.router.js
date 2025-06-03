@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const CartManager = require('../managers/CartManager');
 const cartManager = new CartManager();
+const { deleteProductFromCart, updateProductQuantity  } = require('../controllers/cart.controller');
+const { updatedCart, clearCart } = require('../controllers/cart.controller');
 
 router.post('/', async (req, res) => {
     try {
@@ -91,5 +93,17 @@ router.delete('/:cid', async (req, res) => {
         res.status(500).json({ error: 'Error al vaciar el carrito', details: error.message });
     }
 });
+
+//router.delete('/:cid/products/:pid', deleteProductFromCart);
+
+//router.put('/:cid/products/:pid', updateProductQuantity);
+
+//router.put('/:cid', async (req, res) => {
+    // tu lógica aquí
+//});
+
+//router.delete('/:cid', clearCart);
+
+//router.put('/ruta', undefined);
 
 module.exports = router;
