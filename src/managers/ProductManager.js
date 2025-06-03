@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const product = require('../modelo/productModel');
+const product = require('../models/productModel');
 
 class ProductManager {
     constructor() {

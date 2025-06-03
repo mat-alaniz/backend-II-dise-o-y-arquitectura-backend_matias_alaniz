@@ -1,8 +1,12 @@
-const Cart = require('../modelo/cartModel');
+const Cart = require('../models/cartModel');
+const mongoose = require('mongoose');
 
 const deleteProductFromCart = async (req, res) => {
     try { 
         const { cid, pid } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
+        }
         const cart = await Cart.findById(cid);
         if (!cart) {
             return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
@@ -39,14 +43,54 @@ const updateProductQuantity = async (req, res) => {
         }
         productToUpdate.quantity = quantity;
         await cart.save();
-        res.status(200).json({ status: 'success', payload: cart });
+        const updatedCart = await Cart.findById(cid).populate('products.product');
+        res.status(200).json({ status: 'success', payload: updatedCart });
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: 'error', message: 'Error interno del servidor', error: process.env.NODE_ENV === 'development' ? error.message : null });
     }       
 };
 
+const updatedCart = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const { products } = req.body;
+        if (!Array.isArray(products)) {
+            return res.status(400).json({ status: 'error', message: 'Los productos deben ser un arreglo' });
+        }
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
+        }
+        const cart = await Cart.findByIdAndUpdate(cid, { products }, { new: true, runValidators: true }).populate('products.product');
+        if (!cart){
+            return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+        }
+        res.status(200).json({ status: 'success', payload: cart });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Error interno del servidor', error: process.env.NODE_ENV === 'development' ? error.message : null });
+    }
+};
+const clearCart = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
+        }
+        const cart = await Cart.findByIdAndUpdate(cid, { products: [] }, { new: true }).populate('products.product');
+        if (!cart) {
+            return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+        }
+        res.status(200).json({ status: 'success', payload: cart });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Error interno del servidor', error: process.env.NODE_ENV === 'development' ? error.message : null });
+    }
+};
+
 module.exports = {
     deleteProductFromCart,
-    updateProductQuantity
+    updateProductQuantity,
+    updatedCart,
+    clearCart   
 };

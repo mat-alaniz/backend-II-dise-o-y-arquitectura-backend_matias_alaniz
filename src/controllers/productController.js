@@ -1,4 +1,4 @@
-const product = require('../modelo/productModel');
+const product = require('../models/productModel');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const getProducts = async (req, res) => {
