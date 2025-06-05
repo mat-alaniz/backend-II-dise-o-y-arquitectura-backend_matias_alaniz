@@ -8,9 +8,6 @@ const { deleteProductFromCart, updateProductQuantity, updateCart, clearCart   } 
 router.post('/', async (req, res) => {
     try {
         const newCart = await cartManager.createCart();
-        if (!newCart) {
-            return res.status(500).json({ status: 'error', message: 'Error al crear el carrito' });
-        }
         res.status(201).json({ status: 'success', message: 'Carrito creado exitosamente', payload: newCart });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error al crear el carrito', error: process.env.NODE_ENV === 'development' ? error.message : null });
@@ -19,7 +16,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const carts = await cartManager.getCarts();
-        res.status(200).json({ status: 'success', message: 'Carritos obtenidos exitosamente', payload: carts });
+        res.status(200).json({ status: 'success', message: 'Se han obtenido los carritos exitosamente', payload: carts });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error al obtener los carritos', details: error.message });
     }

@@ -1,33 +1,60 @@
-const fs = require('fs');
 const path = require('path');
-const product = require('../models/productModel');
+const Product = require('../models/productModel');
 
 class ProductManager {
     constructor() {
         this.productsFilePath = path.join(__dirname, '../data/products.json');
     }
 
-    async getProducts(limit = null) {
+    async getProductsPaginated({ limit = 10, page = 1, sort = null, query = null, queryValue = null} = {}) {
         try {
-            let query = product.find();
-            if (limit) {
-                query = query.limit(limit);
+            const filter = {};
+            if (query === 'category') {
+                filter.category = queryValue;
+            } else if (query === 'availability') {
+                filter.stock = queryValue === 'available' ? { $gt: 0 } : 0;
             }
-            return await query.lean();
+
+            const options = { limit: parseInt(limit), page: parseInt(page), lean: true, sort: {} };
+
+            if (sort === 'asc' || sort === 'desc') { options.sort.price = sort === 'asc' ? 1 : -1; }
+
+            const result = await Product.paginate(filter, options);
+
+            return {
+                docs: result.docs,
+                totalPages: result.totalPages,
+                prevPage: result.prevPage,
+                nextPage: result.nextPage,
+                page: result.page,
+                hasPrevPage: result.hasPrevPage,
+                hasNextPage: result.hasNextPage
+            };
 
         } catch (error) {
-            console.error('Error leyendo los productos:', error);
-            return [];
+            console.error('Error en getProductsPaginated:', error);
+            throw error;
         }
     }
 
-    async saveProducts(products) {
+    async getProducts(limit = null) {
         try {
-            
-            const newProducts = new product(products);
-            return await newProducts.save();
+            const query = Product.find().lean();
+            if (limit) query.limit(parseInt(limit));
+            return await query;
         } catch (error) {
-            console.error('Error guardando los productos:', error);
+            console.error('Error en getProducts:', error);
+            throw error;
+        }
+    }
+
+    async saveProducts(productData) {
+        try {
+            const newProduct = new Product(productData);
+            return await newProduct.save();
+        } catch (error) {
+            console.error('Error en saveProducts:', error);
+            throw error;
         }
     }
 
@@ -37,39 +64,35 @@ class ProductManager {
     
     async getProductById(id) {
         try {
-            const products = await product.findById(id).lean();
-            if (!products) {
-                return null;
-            }
-            return products;
+            return await Product.findById(id).lean();
         } catch (error) {
-            console.error('Error obteniendo el producto por ID:', error);
-            return null;
+            console.error('Error en getProductById:', error);
+            throw error;
         }
     }
 
     async updateProduct(id, updateData) {
         try {
-            delete updateData.id;
-            const actualizarProduct = await product.findByIdAndUpdate(id, updateData, { new: true });
-            return actualizarProduct;
+            delete updateData._id;
+            return await Product.findByIdAndUpdate(
+                id, 
+                updateData, 
+                { new: true, runValidators: true }
+            );
         } catch (error) {
-            console.error('Error actualizando el producto:', error);
-            return null;
+            console.error('Error en updateProduct:', error);
+            throw error;
         }
     }
 
     async deleteProduct(id) {
         try {
-           
-            const eliminarProduct = await product.findByIdAndDelete(id);
-            return eliminarProduct;
+            return await Product.findByIdAndDelete(id);
         } catch (error) {
-            console.error('Error eliminando el producto:', error);
-            return false;
+            console.error('Error en deleteProduct:', error);
+            throw error;
         }
     }
 }
 
 module.exports = ProductManager;
-

@@ -3,8 +3,55 @@ const router = express.Router();
 const ProductManager = require('../managers/ProductManager');
 const productManager = new ProductManager();
 
-const { getProducts } = require('../controllers/productController');
-router.get('/', getProducts);
+router.get('/', async (req, res) => {
+    try {
+        const { limit = 10, page = 1, sort, query, queryValue } = req.query;
+        const options = {
+            limit: parseInt(limit),
+            page: parseInt(page),
+            lean: true
+        };
+        const filter = {};
+        if (query && queryValue) {
+            if (query === 'category') {
+                filter.category = queryValue;
+            } else if (query === 'availability') {
+                filter.stock = queryValue === 'available' ? { $gt: 0 } : 0;
+            }
+        }
+        if (sort === 'asc' || sort === 'desc') {
+            options.sort = { price: sort === 'asc' ? 1 : -1 };
+        }
+        const result = await productManager.getProductsPaginated(filter, options);
+        const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}`;
+        const response = {
+            status: 'success',
+            payload: result.docs,
+            totalPages: result.totalPages,
+            prevPage: result.prevPage,
+            nextPage: result.nextPage,
+            page: result.page,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.hasPrevPage ? 
+                `${baseUrl}?page=${result.prevPage}&limit=${options.limit}` + 
+                (sort ? `&sort=${sort}` : '') + 
+                (query ? `&query=${query}&queryValue=${queryValue}` : '') : 
+                null,
+            nextLink: result.hasNextPage ? 
+                `${baseUrl}?page=${result.nextPage}&limit=${options.limit}` + 
+                (sort ? `&sort=${sort}` : '') + 
+                (query ? `&query=${query}&queryValue=${queryValue}` : '') : 
+                null
+        };
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ 
+            status: 'error', 
+            message: error.message 
+        });
+    }
+});
 
 router.get('/:pid', async (req, res) => {
     try {
