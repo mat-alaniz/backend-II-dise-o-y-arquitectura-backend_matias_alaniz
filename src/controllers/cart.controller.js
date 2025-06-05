@@ -11,10 +11,13 @@ const deleteProductFromCart = async (req, res) => {
         }
 
         const updatedCart = await cartManager.removeProductFromCart(cid, pid);
-        res.status(200).json({ status: 'success', message: 'Producto eliminado del carrito', payload: updatedCart });
+        if (!updatedCart) {
+            return res.status(404).json({ status: 'error', message: 'No se ha podido eliminar el producto' });
+        }
+        res.status(200).json({ status: 'success', message: 'Producto eliminado exitosamente', payload: updatedCart });
     } catch (error) {
         console.error('Error en deleteProductFromCart:', error);
-        res.status(500).json({ status: 'error', message: error.message || 'Error al eliminar producto', error: process.env.NODE_ENV === 'development' ? error : null });
+        res.status(500).json({ status: 'error', message: error.message || 'Error al eliminar el producto', error: process.env.NODE_ENV === 'development' ? error : null });
     }
 };
 
@@ -28,6 +31,10 @@ const updateProductQuantity = async (req, res) => {
         }
 
         const updatedCart = await cartManager.updateProductQuantity(cid, pid, quantity);
+
+        if (!updatedCart) {
+            return res.status(404).json({ status: 'error', message: 'No se ha podido actualizar la cantidad' });
+        }
 
         res.status(200).json({ status: 'success', message: 'Cantidad actualizada exitosamente', payload: updatedCart });
     } catch (error) {
@@ -50,7 +57,9 @@ const updateCart = async (req, res) => {
         }
 
         const updatedCart = await cartManager.updateAllCartProducts(cid, products);
-
+        if (!updatedCart) {
+            return res.status(404).json({ status: 'error', message: 'No se ha podido actualizar el carrito' });
+        }
         res.status(200).json({ status: 'success', message: 'Carrito actualizado exitosamente', payload: updatedCart });
     } catch (error) {
         console.error('Error en updateCart:', error);
@@ -67,6 +76,10 @@ const clearCart = async (req, res) => {
         }
 
         const emptiedCart = await cartManager.clearCart(cid);
+
+        if (!emptiedCart) {
+            return res.status(404).json({ status: 'error', message: 'No se ha podido vaciar el carrito' });
+        }
 
         res.status(200).json({ status: 'success', message: 'Carrito vaciado exitosamente', payload: emptiedCart });
     } catch (error) {
