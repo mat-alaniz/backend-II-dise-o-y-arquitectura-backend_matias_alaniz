@@ -41,10 +41,11 @@ router.get('/carts/:cid', async (req, res) => {
   try {
     const cart = await cartManager.getCartById(req.params.cid);
     if (!cart) {
-      return res.status(404).render('error', { message: `Carrito ${req.params.cid} no encontrado` });
+      return res.status(404).render('error', { message: 'Carrito no encontrado' });
     }
-    res.render('carts', { cart, title: `Carrito ${cart._id}` });
-  } catch (error) { res.status(500).render('error', { message: 'Error al cargar el carrito', error });
+    res.render('carts', { cart });
+  } catch (error) {
+    res.status(500).render('error', { message: 'Error al obtener el carrito' });
   }
 });
 

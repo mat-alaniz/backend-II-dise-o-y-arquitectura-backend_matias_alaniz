@@ -11,6 +11,7 @@ const { title } = require('process');
 const productManager = new ProductManager();
 const connectionDB = require('./data/dataBase');
 connectionDB(); 
+const session = require('express-session');
 
 const app = express();
 
@@ -24,6 +25,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'tu_clave_secreta',
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);

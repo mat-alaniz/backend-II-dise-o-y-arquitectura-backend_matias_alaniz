@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const CartManager = require('../managers/CartManager');
 const cartManager = new CartManager();
-const { deleteProductFromCart, updateProductQuantity, updateCart, clearCart   } = require('../controllers/cart.controller');
+const { deleteProductFromCart, updateProductQuantity, updateCart, clearCart } = require('../controllers/cart.controller');
 
 
 router.post('/', async (req, res) => {
@@ -21,8 +21,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error al obtener los carritos', details: error.message });
     }
 });
-
-router.get('/:cid/products', async (req, res) => {
+router.get('/:cid', async (req, res) => {
     try {
         const cart = await cartManager.getCartById(req.params.cid);
         if (!cart) {
@@ -33,7 +32,6 @@ router.get('/:cid/products', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error al obtener los productos del carrito', error: process.env.NODE_ENV === 'development' ? error.message : null }); 
     }
 });
-
 router.post('/:cid/products/:pid', async (req, res) => {
     try {
         const updatedCart = await cartManager.addProductToCart(req.params.cid, req.params.pid);
@@ -50,5 +48,16 @@ router.delete('/:cid/products/:pid', deleteProductFromCart);
 router.put('/:cid/products/:pid', updateProductQuantity);
 router.put('/:cid', updateCart);
 router.delete('/:cid', clearCart);
+
+router.get('/products', async (req, res) => {
+    try {
+        const productos = await productManager.getProducts();
+        const cart = await cartManager.getCartById(req.session.cartId);
+        const cartCount = cart ? cart.products.reduce((acc, item) => acc + item.quantity, 0) : 0;
+        res.render('products', { payload: productos, cartId: req.session.cartId, cartCount });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Error al obtener los productos', error: process.env.NODE_ENV === 'development' ? error.message : null });
+    }
+});
 
 module.exports = router;
