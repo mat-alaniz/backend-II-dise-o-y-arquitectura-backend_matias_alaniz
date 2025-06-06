@@ -52,7 +52,7 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('deleteProduct', async (id) => {
-    await productManager.deleteProduct(id); // Quita Number()
+    await productManager.deleteProduct(id); 
     const productosActualizados = await productManager.getProducts();
     io.emit('updateProducts', productosActualizados);
   });

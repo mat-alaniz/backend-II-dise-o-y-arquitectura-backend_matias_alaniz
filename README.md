@@ -1,29 +1,43 @@
-# Backend Ecommerce - Entregas 1ra y 2da
+# 🛒 Ecommerce Backend - Proyecto Completo (3 Entregas)
 
-## 🚀 Tecnologías usadas
-- Node.js
-- Express
-- Socket.io
-- Handlebars
-- Bootstrap
-- SweetAlert2
+## 📌 Contenido
+1. [Evolución del Proyecto](#-evolución-del-proyecto)  
+2. [Tecnologías](#-tecnologías)  
+3. [Instalación](#-instalación)  
+4. [Endpoints](#-endpoints)  
+5. [Vistas](#-vistas)  
+6. [Capturas](#-capturas)  
 
-## 📌 Funcionalidades implementadas
+---
 
-### 1️⃣ Primera Entrega (API REST)
-✔ Sistema de gestión de productos con `ProductManager`  
-✔ Endpoints:
-- `GET /api/products` - Listar todos los productos
-- `GET /api/products/:pid` - Obtener producto por ID
-- `POST /api/products` - Crear nuevo producto
-- `PUT /api/products/:pid` - Actualizar producto
-- `DELETE /api/products/:pid` - Eliminar producto
+## 🚀 Evolución del Proyecto
 
-### 2️⃣ Segunda Entrega (WebSockets + Handlebars)
-✔ Vista `/home` con lista estática de productos (Handlebars)  
-✔ Vista `/realtimeproducts` con actualización en tiempo real (WebSockets)  
-✔ Formulario interactivo para agregar productos  
-✔ Eliminación con confirmación mediante SweetAlert2  
-✔ Diseño responsive con Bootstrap
+### 1️⃣ Primera Entrega (FileSystem)
+```markdown
+- ✔️ CRUD completo de productos
+- ✔️ Persistencia en archivos JSON
+- ✔️ Router básico con Express
+- ✔️ Manejo manual de IDs
+### 2️⃣ Segunda Entrega
+- ✔️ Migración a MongoDB (Mongoose)
+- ✔️ Modelos: Product y Cart
+- ✔️ Sessions básicas
+- ✔️ Vistas con Handlebars
+- ✔️ Login básico
+### 3️⃣ Entrega Final (Versión Profesional)
+- ✔️ Paginación avanzada (limit, page, sort, query)
+- ✔️ Gestión de carritos con populate
+- ✔️ Validaciones reforzadas
+- ✔️ Vistas completas (products, cart)
 
-   
+### 🛠 Tecnologías
+
+- ✔️ Backend:	Node.js, Express, Mongoose
+- ✔️ Frontend:	Handlebars, Bootstrap
+- ✔️ Base de Datos:	MongoDB Atlas
+- ✔️ Desarrollo:	Nodemon
+
+## Autor
+Matias Jesus Alaniz
+https://www.linkedin.com/in/matias-jesus-alaniz-552099343/
+https://github.com/mat-alaniz
