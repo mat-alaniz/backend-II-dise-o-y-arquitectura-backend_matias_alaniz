@@ -1,4 +1,4 @@
-# 🛒 Ecommerce Backend - Proyecto Completo (3 Entregas)
+# 🛒 Ecommerce Backend - Proyecto Completo.
 
 ## 📌 Contenido
 1. [Evolución del Proyecto](#-evolución-del-proyecto)  
