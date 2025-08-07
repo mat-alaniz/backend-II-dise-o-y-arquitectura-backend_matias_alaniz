@@ -1,5 +1,5 @@
-const Cart = require('../models/cartModel');
-const Product = require('../models/productModel');
+import Cart from '../models/cartModel.js';
+import Product from '../models/productModel.js';
 
 class CartManager {
     async getCarts() {
@@ -137,7 +137,8 @@ class CartManager {
             
             for (const cart of carts) {
                 const validProducts = await Promise.all(
-                    cart.products.map(async item => { const productExists = await Product.exists({ _id: item.product });
+                    cart.products.map(async item => { 
+                        const productExists = await Product.exists({ _id: item.product });
                         return productExists ? item : null;
                     })
                 );
@@ -154,5 +155,5 @@ class CartManager {
     }
 }
 
-module.exports = CartManager;
+export default CartManager;
 

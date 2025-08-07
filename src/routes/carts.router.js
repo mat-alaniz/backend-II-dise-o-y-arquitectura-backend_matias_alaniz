@@ -1,9 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const CartManager = require('../managers/CartManager');
-const cartManager = new CartManager();
-const { deleteProductFromCart, updateProductQuantity, updateCart, clearCart } = require('../controllers/cart.controller');
+import express from 'express';
+import CartManager from '../managers/CartManager.js';
+import { deleteProductFromCart, updateProductQuantity, updateCart, clearCart } from '../controllers/cart.controller.js';
+// Si necesitas productManager para el endpoint de /products:
+import ProductManager from '../managers/ProductManager.js';
 
+const router = express.Router();
+const cartManager = new CartManager();
+const productManager = new ProductManager();
 
 router.post('/', async (req, res) => {
     try {
@@ -60,4 +63,4 @@ router.get('/products', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

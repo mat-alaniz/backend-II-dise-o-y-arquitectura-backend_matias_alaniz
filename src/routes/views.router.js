@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import ProductManager from '../managers/ProductManager.js';
+import CartManager from '../managers/CartManager.js';
+
 const router = express.Router();
-const ProductManager = require('../managers/ProductManager');
 const productManager = new ProductManager();
-const CartManager = require('../managers/CartManager');
 const cartManager = new CartManager();
 
 const getOrCreateCart = async (req, res, next) => {
@@ -64,4 +65,4 @@ router.get('/test-cart', async (req, res) => {
   res.render('carts', { cart: testCart });
 });
 
-module.exports = router;
+export default router;

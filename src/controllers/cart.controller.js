@@ -1,8 +1,8 @@
-const CartManager = require('../managers/CartManager');
+import CartManager from '../managers/CartManager.js';
+import mongoose from 'mongoose';
 const cartManager = new CartManager();
-const mongoose = require('mongoose');
 
-const deleteProductFromCart = async (req, res) => {
+export const deleteProductFromCart = async (req, res) => {
     try { 
         const { cid, pid } = req.params;
         
@@ -21,7 +21,7 @@ const deleteProductFromCart = async (req, res) => {
     }
 };
 
-const updateProductQuantity = async (req, res) => {
+export const updateProductQuantity = async (req, res) => {
     try {
         const { cid, pid } = req.params;
         const { quantity } = req.body;
@@ -43,7 +43,7 @@ const updateProductQuantity = async (req, res) => {
     }       
 };
 
-const updateCart = async (req, res) => {
+export const updateCart = async (req, res) => {
     try {
         const { cid } = req.params;
         const { products } = req.body;
@@ -67,7 +67,7 @@ const updateCart = async (req, res) => {
     }
 };
 
-const clearCart = async (req, res) => {
+export const clearCart = async (req, res) => {
     try {
         const { cid } = req.params;
 
@@ -88,9 +88,5 @@ const clearCart = async (req, res) => {
     }
 };
 
-module.exports = {
-    deleteProductFromCart,
-    updateProductQuantity,
-    updateCart,
-    clearCart   
-};  
+
+export default cartManager;

@@ -1,9 +1,10 @@
-const path = require('path');
-const Product = require('../models/productModel');
+import path from 'path';
+import Product from '../models/productModel.js';
 
 class ProductManager {
     constructor() {
-        this.productsFilePath = path.join(__dirname, '../data/products.json');
+       
+        this.productsFilePath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/products.json');
     }
 
     async getProductsPaginated({ limit = 10, page = 1, sort = null, query = null, queryValue = null} = {}) {
@@ -95,4 +96,4 @@ class ProductManager {
     }
 }
 
-module.exports = ProductManager;
+export default ProductManager;

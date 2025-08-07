@@ -1,12 +1,12 @@
-const product = require('../models/productModel');
-const mongoosePaginate = require('mongoose-paginate-v2');
+import product from '../models/product.js';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
-const getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
-        const filter ={};
+        const filter = {};
         if (query) {
-           if (query === 'available') {
+            if (query === 'available') {
                 filter.stock = { $gt: 0 };
             } else {
                 filter.category = query;
@@ -44,6 +44,4 @@ const getProducts = async (req, res) => {
     } catch (error) {
         res.status(500).json({status: 'error',message: 'Internal Server Error', error: process.env.NODE_ENV === 'development' ? error.message : null});
     }
-}
-
-module.exports = { getProducts };
+};
