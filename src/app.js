@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const exphbs = require('express-handlebars');
 const { createServer } = require('http'); 
@@ -58,7 +60,7 @@ io.on('connection', async (socket) => {
   });
 });
 
-const PORT = 8081;
+const PORT = process.env.PORT || 8081;
 httpServer.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
