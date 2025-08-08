@@ -1,4 +1,3 @@
-//Define estrategias de autenticación (local y JWT)Verifica credenciales (email + password).Genera/firma tokens JWT.
 
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';

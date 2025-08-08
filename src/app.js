@@ -8,6 +8,7 @@ import path from 'path';
 import viewsRouter from './routes/views.router.js';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
+import sessionsRouter from './routes/sessions.router.js';
 import ProductManager from './managers/ProductManager.js';
 import { title } from 'process';
 import connectionDB from './data/dataBase.js';
@@ -37,7 +38,7 @@ app.use(session({
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
-
+app.use('/api/sessions', sessionsRouter);
 
 app.use((req, res) => {
   res.status(404).send('Página no encontrada');
