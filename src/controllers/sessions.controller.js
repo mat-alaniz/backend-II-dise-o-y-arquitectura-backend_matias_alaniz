@@ -7,11 +7,13 @@ import { addTokenToBlacklist } from '../utils/tokenBlacklist.js';
 
 export const registerUser = async (req, res) => {
     try {
-        const { first_name, last_name, email, age, password } = req.body;
+        const { first_name, last_name, email, age, password, role } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: 'campos requeridos y obligatorios' });
         }
-        const user = await User.create({ first_name, last_name, email, age, password });
+        const allowedRoles = ['user', 'admin'];
+        const userRole = allowedRoles.includes(role) ? role : 'user';
+        const user = await User.create({ first_name, last_name, email, age, password, role: userRole });
         res.status(201).json({ status: 'success', user: { id: user._id, email: user.email, role: user.role } });
 
     } catch (error) {
