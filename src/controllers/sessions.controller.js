@@ -2,6 +2,8 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import { JWT_SECRET } from '../config/config.js';
+import { addTokenToBlacklist } from '../utils/tokenBlacklist.js';
+
 
 export const registerUser = async (req, res) => {
     try {
@@ -34,5 +36,17 @@ export const current = async (req, res) => {
         res.status(200).json({ status: 'success', user: { id: req.user._id, email: req.user.email, role: req.user.role } });
     } catch (error) {
         res.status(500).json({ error: 'error en el servidor' });
+    }
+};
+
+export const logout = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (token) {  addTokenToBlacklist(token);
+        }
+        res.clearCookie('jwt');
+        res.status(200).json({ status: 'success', message: 'Sesión cerrada exitosamente' });
+    } catch (error) {
+        res.status(500).json({ error: 'error al cerrar sesión' });
     }
 };
