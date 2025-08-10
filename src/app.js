@@ -10,13 +10,12 @@ import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import ProductManager from './managers/ProductManager.js';
-import { title } from 'process';
 import connectionDB from './data/dataBase.js';
 import session from 'express-session';
-import chalk from 'chalk';
 import passport from 'passport';
 import './config/passport.js'
 import cookieParser from 'cookie-parser';
+
 
 connectionDB();
 

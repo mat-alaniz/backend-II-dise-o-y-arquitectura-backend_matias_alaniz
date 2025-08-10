@@ -1,4 +1,4 @@
-// config/passport.js  (o la ruta que uses)
+
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
