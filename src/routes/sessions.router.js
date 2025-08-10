@@ -8,7 +8,7 @@ const router = Router();
 //registro de usuario
 router.post('/register', registerUser);
 //login de usuario
-router.post('/login', login);
+router.post('/login', passport.authenticate('local', { session: false }), login);
 //obtener usuario actual
 router.get('/current', current);
 //cerrar sesión

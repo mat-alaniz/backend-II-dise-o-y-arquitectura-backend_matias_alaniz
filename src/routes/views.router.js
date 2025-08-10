@@ -1,6 +1,8 @@
 import express from 'express';
 import ProductManager from '../managers/ProductManager.js';
 import CartManager from '../managers/CartManager.js';
+import passport from 'passport';
+import { login } from '../controllers/sessions.controller.js';
 
 const router = express.Router();
 const productManager = new ProductManager();
@@ -20,6 +22,9 @@ const getOrCreateCart = async (req, res, next) => {
 
 router.get('/', getOrCreateCart, async (req, res) => {
   try {
+    if (!req.session.user) {
+      return res.redirect('/register');
+    }
     const products = await productManager.getProducts();
     const cart = await cartManager.getCartById(req.session.cartId);
 
@@ -63,6 +68,20 @@ router.get('/test-cart', async (req, res) => {
     }]
   };
   res.render('carts', { cart: testCart });
+});
+
+router.get('/register', (req, res) => {
+  res.render('register');
+});
+
+router.get('/login', (req, res) => {
+  res.render('login');
+});
+
+router.post('/login', passport.authenticate('local', { session: false }), login);
+
+router.get('/current', (req, res) => {
+  res.render('current');
 });
 
 export default router;

@@ -14,6 +14,9 @@ import { title } from 'process';
 import connectionDB from './data/dataBase.js';
 import session from 'express-session';
 import chalk from 'chalk';
+import passport from 'passport';
+import './config/passport.js'
+import cookieParser from 'cookie-parser';
 
 connectionDB();
 
@@ -22,12 +25,13 @@ const app = express();
 
 app.engine('handlebars', exphbs.engine({
   extname: '.handlebars',
-  layoutsDir: path.join(path.resolve(), 'views', 'layouts'),
+  layoutsDir: path.join(path.resolve(), 'src', 'views', 'layouts'),
   defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
-app.set('views', path.join(path.resolve(), 'views'));
+app.set('views', path.join(path.resolve(), 'src', 'views'));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(path.resolve(), 'public')));
 app.use(session({
@@ -35,6 +39,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(passport.initialize());
 
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);

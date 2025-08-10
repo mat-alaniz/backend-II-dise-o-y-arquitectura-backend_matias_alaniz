@@ -42,7 +42,8 @@ passport.use(new JWTStrategy(
     try {
       const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
       const blacklisted = await isTokenBlacklisted(token);
-      if (blacklisted) return done(null, false, { message: 'Token inválido (sesión cerrada)' });
+      if (blacklisted) return done(null, false, { message: 'Token inválido (sesión cerrada)' });+ç
+      
       const user = await User.findById(jwtPayload.id).select('-password');
       if (!user) return done(null, false, { message: 'Usuario no encontrado' });
 
