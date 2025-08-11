@@ -20,7 +20,6 @@ import './config/passport.js';
 const app = express();
 const productManager = new ProductManager();
 
-// Conexión a MongoDB - Versión corregida
 connectionDB().then(() => {
   console.log('✅ MongoDB conectado correctamente');
 }).catch(err => {
@@ -49,23 +48,13 @@ app.use(cookieParser());
 
 // Configuración de sesión - Versión definitiva para Atlas
 app.use(session({
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_ATLAS_URL,
-    mongoOptions: {
-      ssl: true,
-      sslValidate: true,
-      connectTimeoutMS: 10000,
-      socketTimeoutMS: 45000
-    }
-  }),
-  secret: process.env.SESSION_SECRET || 'secret_fallback',
+  secret: 'tu_clave_secreta',
   resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
-  }
+  saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    // No pongas sslvalidate aquí
+  })
 }));
 
 // Passport
@@ -120,8 +109,6 @@ io.on('connection', async (socket) => {
 const PORT = process.env.PORT || 8081;
 httpServer.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`Entorno: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Base de datos: ${process.env.MONGO_ATLAS_URL ? 'Atlas' : 'Local'}`);
 });
 
-export { app, io };
+export default app;

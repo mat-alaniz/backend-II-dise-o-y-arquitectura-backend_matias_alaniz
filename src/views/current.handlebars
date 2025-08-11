@@ -91,54 +91,34 @@
 
     <div class="text-center mt-4">
       <button id="logoutBtn" class="btn btn-outline-primary w-100">Cerrar sesión</button>
+      <a href="/" class="btn btn-primary">Ir a Home</a>
     </div>
   </div>
 
   <script>
-    (async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'No autenticado',
-          text: 'Por favor iniciá sesión',
-          confirmButtonText: 'Ir al login'
-        }).then(() => location.href = '/login');
-        return;
-      }
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('jwt');
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
 
-      try {
-        const res = await fetch('/api/sessions/current', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!res.ok) throw new Error('Token inválido');
-
-        const { user } = await res.json();
-      
-        document.querySelector('.profile-name').textContent = `${user.first_name} ${user.last_name}`;
-        document.querySelector('.profile-role').textContent = user.role;
-        document.querySelectorAll('.list-group-item span')[0].textContent = user.email;
-        document.querySelectorAll('.list-group-item span')[1].textContent = user.age;
-        document.querySelectorAll('.list-group-item span')[2].textContent = user.cart;
-      } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Sesión expirada',
-          text: 'Volvé a iniciar sesión'
-        }).then(() => location.href = '/login');
-      }
-    })();
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      Swal.fire({
-        icon: 'success',
-        title: 'Sesión cerrada',
-        timer: 1000,
-        showConfirmButton: false
-      }).then(() => location.href = '/login');
+  try {
+    const res = await fetch('/api/sessions/current', {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-  </script>
+    const result = await res.json();
+
+    if (res.ok) {
+      document.getElementById('user-info').innerText = JSON.stringify(result.user, null, 2);
+    } else {
+      window.location.href = '/login';
+    }
+  } catch (err) {
+    window.location.href = '/login';
+  }
+});
+</script>
+<pre id="user-info"></pre>
 </body>
 </html>

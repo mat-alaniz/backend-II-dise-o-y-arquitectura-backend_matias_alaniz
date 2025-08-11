@@ -94,56 +94,29 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = Object.fromEntries(new FormData(form).entries());
 
-      const form = e.target;
-      if (!form.checkValidity()) {
-        form.classList.add('was-validated');
-        return;
-      }
-
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-
-      try {
-        const res = await fetch('/api/sessions/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (res.ok) {
-        
-          localStorage.setItem('token', result.token);
-
-          await Swal.fire({
-            icon: 'success',
-            title: '¡Bienvenido!',
-            text: 'Redirigiendo...',
-            timer: 1500,
-            showConfirmButton: false
-          });
-
-        
-          location.href = '/current';
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Credenciales inválidas',
-            text: result.error || 'Verificá tu email o contraseña'
-          });
-        }
-      } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de conexión',
-          text: 'Intentá nuevamente más tarde'
-        });
-      }
+  try {
+    const res = await fetch('/api/sessions/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
+    const result = await res.json();
+
+    if (res.ok && result.token) {
+      localStorage.setItem('jwt', result.token);
+      location.href = '/current';
+    } else {
+      Swal.fire({ icon: 'error', title: 'Error', text: result.error || 'Login fallido' });
+    }
+  } catch (err) {
+    Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'Intentá nuevamente más tarde' });
+  }
+});
   </script>
 </body>
 </html>

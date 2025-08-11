@@ -45,14 +45,17 @@
     </a>
   </div>
 
-  <div class="text-center mt-4">
-    <a href="/register" class="btn btn-outline-primary">Registrarse</a>
-  </div>
-</div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+
+<script>
+  const token = localStorage.getItem('jwt');
+  fetch('/api/sessions/current', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  // ...maneja la respuesta...
+</script>
 
 <script>
   let cartId = '{{cartId}}'; 

@@ -3,7 +3,7 @@ import User from '../models/user.model.js';
 import { JWT_SECRET } from '../config/config.js';
 
 
-export const register = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const { first_name, last_name, email, age, password } = req.body;
 
@@ -45,57 +45,21 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        // Validación básica
-        if (!email || !password) {
-            return res.status(400).json({
-                status: 'error',
-                error: 'Email y contraseña son obligatorios'
-            });
+        if (!req.user) {
+            return res.status(401).json({ error: 'credenciales inválidas' });
         }
-
-        // Buscar usuario
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({
-                status: 'error',
-                error: 'Credenciales inválidas'
-            });
-        }
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({
-                status: 'error',
-                error: 'Credenciales inválidas'
-            });
-        }
-
         const token = jwt.sign(
-            {
-                id: user._id,
-                email: user.email,
-                role: user.role
-            },
+            { id: req.user._id, email: req.user.email, role: req.user.role },
             JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: '1h' }
         );
-
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             token,
-            user: {
-                id: user._id,
-                email: user.email,
-                role: user.role
-            }
+            user: { id: req.user._id, email: req.user.email, role: req.user.role }
         });
-
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            error: 'Error en el login'
-        });
+        return res.status(500).json({ error: 'error en el servidor' });
     }
 };
 

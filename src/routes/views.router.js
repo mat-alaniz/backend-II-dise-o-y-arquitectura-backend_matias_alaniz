@@ -20,11 +20,9 @@ const getOrCreateCart = async (req, res, next) => {
   }
 };
 
+// Ejemplo de protección con JWT
 router.get('/', getOrCreateCart, async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.redirect('/register');
-    }
     const products = await productManager.getProducts();
     const cart = await cartManager.getCartById(req.session.cartId);
 
