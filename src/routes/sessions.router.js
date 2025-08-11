@@ -1,18 +1,19 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { registerUser, login, current, logout } from '../controllers/sessions.controller.js';
+import { register, login, current, logout } from '../controllers/sessions.controller.js';
 import { isAdmin } from '../middlewares/authMiddleware.js';
 import jwt from 'jsonwebtoken';
 
 const router = Router();
 
 //registro de usuario
-router.post('/register', registerUser);
+router.post('/register', register);
 //login de usuario
 router.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.cookie('token', token, { 
         httpOnly: true,
+        sameSite: 'lax',
         sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000 
      });

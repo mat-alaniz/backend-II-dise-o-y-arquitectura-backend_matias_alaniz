@@ -99,8 +99,8 @@ npm install
 
 # Configurar variables de entorno (.env)
 PORT=8081
-MONGO_URI=""
-JWT_SECRET=""
+MONGO_URI="mongodb+srv://matiasalaniz:kcncNKnkNklkAKNnbu@cluster0.djc6pej.mongodb.net/caiDB?retryWrites=true&w=majority&appName=Cluster0"
+JWT_SECRET="miClaveSuperSecreta"
 
 # Iniciar servidor en desarrollo
  · npm start
