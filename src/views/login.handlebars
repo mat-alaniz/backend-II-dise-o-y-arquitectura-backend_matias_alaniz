@@ -74,15 +74,15 @@
   <div class="card-login">
     <h2 class="card-title text-center">Iniciar sesión</h2>
 
-    <form id="loginForm" novalidate>
+    <form id="loginForm">
       <div class="mb-3">
         <label class="form-label fw-semibold">Email</label>
-        <input type="email" name="email" class="form-control" placeholder="ejemplo@mail.com" required>
+        <input type="email" id="email" class="form-control" placeholder="ejemplo@mail.com" required>
       </div>
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Contraseña</label>
-        <input type="password" name="password" class="form-control" placeholder="Tu contraseña" required>
+        <input type="password" id="password" class="form-control" placeholder="Tu contraseña" required>
       </div>
 
       <button type="submit" class="btn btn-primary w-100">Entrar</button>
@@ -94,28 +94,40 @@
   </div>
 
   <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form).entries());
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-  try {
-    const res = await fetch('/api/sessions/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const result = await res.json();
-
-    if (res.ok && result.token) {
-      localStorage.setItem('jwt', result.token);
-      location.href = '/current';
-    } else {
-      Swal.fire({ icon: 'error', title: 'Error', text: result.error || 'Login fallido' });
+            try {
+                const res = await fetch('/api/sessions/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    console.log('Login OK, redirigiendo...');
+                    window.location.href = '/current';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Credenciales inválidas'
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión con el servidor'
+                });
+            }
+        });
     }
-  } catch (err) {
-    Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'Intentá nuevamente más tarde' });
-  }
 });
   </script>
 </body>

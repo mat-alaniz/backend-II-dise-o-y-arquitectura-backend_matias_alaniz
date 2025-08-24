@@ -90,33 +90,33 @@
     </ul>
 
     <div class="text-center mt-4">
-      <button id="logoutBtn" class="btn btn-outline-primary w-100">Cerrar sesión</button>
+      <button id="logoutBtn" class="btn btn-danger">Cerrar sesión</button>
       <a href="/" class="btn btn-primary">Ir a Home</a>
     </div>
   </div>
 
   <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  const token = localStorage.getItem('jwt');
-  if (!token) {
-    window.location.href = '/login';
-    return;
-  }
-
-  try {
-    const res = await fetch('/api/sessions/current', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const result = await res.json();
-
+    const res = await fetch('/api/sessions/current');
+    const data = await res.json();
     if (res.ok) {
-      document.getElementById('user-info').innerText = JSON.stringify(result.user, null, 2);
+        setTimeout(() => window.location.href = '/home', 1000);
     } else {
-      window.location.href = '/login';
+        window.location.href = '/login';
     }
-  } catch (err) {
-    window.location.href = '/login';
-  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try {
+        await fetch('/api/sessions/logout', { method: 'POST' });
+        window.location.href = '/login';
+    } catch (err) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cerrar la sesión'
+        });
+    }
 });
 </script>
 <pre id="user-info"></pre>

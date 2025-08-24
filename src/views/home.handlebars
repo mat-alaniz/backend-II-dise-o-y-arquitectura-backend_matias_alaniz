@@ -45,6 +45,11 @@
     </a>
   </div>
 
+  {{#if (eq user.role "admin")}}
+    <a href="/realTimeProducts">Productos en tiempo real</a>
+  {{else}}
+    <p>No tienes acceso a productos en tiempo real.</p>
+  {{/if}}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>

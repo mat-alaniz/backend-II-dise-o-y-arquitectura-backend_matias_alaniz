@@ -20,16 +20,8 @@ const getOrCreateCart = async (req, res, next) => {
   }
 };
 
-// Ejemplo de protección con JWT
-router.get('/', getOrCreateCart, async (req, res) => {
-  try {
-    const products = await productManager.getProducts();
-    const cart = await cartManager.getCartById(req.session.cartId);
-
-    res.render('home', { products, cartId: req.session.cartId, cartItemCount: cart.products.reduce((sum, item) => sum + item.quantity, 0) });
-  } catch (error) {
-    res.status(500).render('error', { message: 'Error al cargar productos', error });
-  }
+router.get('/', (req, res) => {
+    res.redirect('/register');
 });
 
 router.get('/realtimeproducts', async (req, res) => {
@@ -80,6 +72,23 @@ router.post('/login', passport.authenticate('local', { session: false }), login)
 
 router.get('/current', (req, res) => {
   res.render('current');
+});
+
+router.get('/home', (req, res) => {
+    const user = req.user;
+    res.render('home', { user });
+});
+
+// Middleware para verificar autenticación y rol
+function isAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.user.role === 'admin') {
+        return next();
+    }
+    return res.status(403).render('error', { message: 'Acceso denegado: solo administradores.' });
+}
+
+router.get('/realTimeProducts', isAdmin, (req, res) => {
+    res.render('realTimeProducts', { user: req.user });
 });
 
 export default router;

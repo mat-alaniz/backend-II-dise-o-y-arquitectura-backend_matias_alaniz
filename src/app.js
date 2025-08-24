@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import exphbs from 'express-handlebars';
+import handlebars from 'express-handlebars';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
@@ -27,18 +27,15 @@ connectionDB().then(() => {
 });
 
 // Configuración de Handlebars
-app.engine('handlebars', exphbs.engine({
-  extname: '.handlebars',
-  layoutsDir: path.join(path.resolve(), 'src', 'views', 'layouts'),
-  defaultLayout: 'main',
-  helpers: {
-    eq: (a, b) => a === b,
-    json: (context) => JSON.stringify(context)
-  }
-}));
+const hbs = handlebars.create({
+    helpers: {
+        eq: (a, b) => a === b
+    }
+});
 
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', path.join(path.resolve(), 'src', 'views'));
+app.set('views', './src/views');
 
 // Middlewares básicos
 app.use(express.json());
