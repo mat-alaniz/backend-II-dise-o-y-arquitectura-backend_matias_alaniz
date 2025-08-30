@@ -6,14 +6,16 @@ const router = Router();
 
 
 router.post('/register', 
-  passport.authenticate('register', { failureRedirect: '/register?error=1', session: false }),
+  passport.authenticate('register', { failureMessage: true, session: false }),
   (req, res) => {
-    res.status(201).json({ status: 'success', message: 'Usuario registrado con éxito', user: req.user });
+    res.status(201).json({ status: 'success', message: 'Usuario registrado con éxito',
+      user: { id: req.user.id, email: req.user.email, first_name: req.user.first_name, last_name: req.user.last_name }
+    });
   }
 );
 
 router.post('/login', 
-  passport.authenticate('login', { failureRedirect: '/login?error=1', session: false }),
+  passport.authenticate('login', { failureMessage: true, session: false }),
   issueToken 
 );
 

@@ -22,20 +22,22 @@ passport.use(new JwtStrategy(opts, async (payload, done) => {
 }));
 // estrategia para registro
 passport.use('register', new LocalStrategy(
-  { usernameField: 'email', passReqToCallback: true },
+  { usernameField: 'email', passwordField: 'password', passReqToCallback: true },
   async (req, email, password, done) => {
     try {
       // Verifica si el usuario ya existe
       const exists = await User.findOne({ email });
       if (exists) return done(null, false, { message: 'El email ya está registrado' });
 
-      // Crea el usuario (el modelo hashea la contraseña)
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Crea el usuario 
       const user = await User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email,
         age: req.body.age,
-        password
+        password: hashedPassword
       });
       return done(null, user);
     } catch (error) {
@@ -46,8 +48,8 @@ passport.use('register', new LocalStrategy(
 
 //estrategia para login
 passport.use("login", new LocalStrategy(
-  { usernameField: 'email', passReqToCallback: true },
-  async (req, email, password, done) => {
+  { usernameField: 'email', passwordField: 'password' },
+  async ( email, password, done) => {
     try {
       const user = await User.findOne({ email });
       if (!user) return done(null, false, { message: 'Usuario no encontrado' });

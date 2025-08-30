@@ -1,9 +1,23 @@
-
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/config.js';
 
 export const issueToken = (req, res) => {
-    try{
+    try {
+    
+        if (req.authError) {
+            return res.status(401).json({
+                status: 'error',
+                message: req.authError.message || 'Error de autenticación'
+            });
+        }
+
+        if (!req.user) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Usuario no autenticado'
+            });
+        }
+
         const user = req.user;
 
         const token = jwt.sign(
@@ -22,13 +36,22 @@ export const issueToken = (req, res) => {
         res.status(200).json({
             status: 'success',
             message: 'Login exitoso',
-            user: { id: user._id, email: user.email, role: user.role }
+            token,
+            user: { 
+                id: user._id, 
+                email: user.email, 
+                role: user.role,
+                first_name: user.first_name,
+                last_name: user.last_name
+            }
         });
     } catch (error) {
-        res.status(500).json({ error: 'error al generar el token' });
+        res.status(500).json({ 
+            status: 'error',
+            error: 'Error al generar el token' 
+        });
     }
 };
-
 
 export const current = (req, res) => {
     try {
@@ -38,7 +61,7 @@ export const current = (req, res) => {
             last_name: req.user.last_name,
             email: req.user.email,
             age: req.user.age,
-            role: req.user.role
+            role: user.role
         };
 
         res.status(200).json({
@@ -53,6 +76,7 @@ export const current = (req, res) => {
         });
     }
 };
+
 export const logout = (req, res) => {
     try {
         res.clearCookie('jwt');
