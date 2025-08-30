@@ -1,8 +1,6 @@
 import express from 'express';
 import ProductManager from '../managers/ProductManager.js';
 import CartManager from '../managers/CartManager.js';
-import passport from 'passport';
-import { login } from '../controllers/sessions.controller.js';
 
 const router = express.Router();
 const productManager = new ProductManager();
@@ -21,7 +19,7 @@ const getOrCreateCart = async (req, res, next) => {
 };
 
 router.get('/', (req, res) => {
-    res.redirect('/register');
+  res.redirect('/register');
 });
 
 router.get('/realtimeproducts', async (req, res) => {
@@ -68,27 +66,25 @@ router.get('/login', (req, res) => {
   res.render('login');
 });
 
-router.post('/login', passport.authenticate('local', { session: false }), login);
-
 router.get('/current', (req, res) => {
   res.render('current');
 });
 
 router.get('/home', (req, res) => {
-    const user = req.user;
-    res.render('home', { user });
+  const user = req.user;
+  res.render('home', { user });
 });
 
 // Middleware para verificar autenticación y rol
 function isAdmin(req, res, next) {
-    if (req.isAuthenticated() && req.user.role === 'admin') {
-        return next();
-    }
-    return res.status(403).render('error', { message: 'Acceso denegado: solo administradores.' });
+  if (req.isAuthenticated() && req.user.role === 'admin') {
+    return next();
+  }
+  return res.status(403).render('error', { message: 'Acceso denegado: solo administradores.' });
 }
 
 router.get('/realTimeProducts', isAdmin, (req, res) => {
-    res.render('realTimeProducts', { user: req.user });
+  res.render('realTimeProducts', { user: req.user });
 });
 
 export default router;
