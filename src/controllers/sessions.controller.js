@@ -3,19 +3,14 @@ import { JWT_SECRET } from '../config/config.js';
 
 export const issueToken = (req, res) => {
     try {
-    
         if (req.authError) {
-            return res.status(401).json({
-                status: 'error',
+            return res.status(401).json({ status: 'error',
                 message: req.authError.message || 'Error de autenticación'
             });
         }
 
         if (!req.user) {
-            return res.status(401).json({
-                status: 'error',
-                message: 'Usuario no autenticado'
-            });
+            return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
         }
 
         const user = req.user;
@@ -36,7 +31,6 @@ export const issueToken = (req, res) => {
         res.status(200).json({
             status: 'success',
             message: 'Login exitoso',
-            token,
             user: { 
                 id: user._id, 
                 email: user.email, 
@@ -46,10 +40,7 @@ export const issueToken = (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ 
-            status: 'error',
-            error: 'Error al generar el token' 
-        });
+        res.status(500).json({ status: 'error', error: 'Error al generar el token' });
     }
 };
 
@@ -61,34 +52,27 @@ export const current = (req, res) => {
             last_name: req.user.last_name,
             email: req.user.email,
             age: req.user.age,
-            role: user.role
+            role: req.user.role
         };
 
-        res.status(200).json({
-            status: 'success',
-            user: userData
-        });
+        res.status(200).json({ status: 'success', user: userData });
 
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            error: 'Error al obtener datos de usuario'
-        });
+        res.status(500).json({ status: 'error', error: 'Error al obtener datos de usuario' });
     }
 };
 
 export const logout = (req, res) => {
     try {
-        res.clearCookie('jwt');
-        res.status(200).json({
-            status: 'success',
-            message: 'Sesión cerrada exitosamente'
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
         });
 
+        res.status(200).json({ status: 'success', message: 'Sesión cerrada exitosamente' });
+
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            error: 'Error al cerrar sesión'
-        });
+        res.status(500).json({ status: 'error', error: 'Error al cerrar sesión' });
     }
 };
