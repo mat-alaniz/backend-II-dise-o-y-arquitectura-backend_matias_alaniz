@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/config.js';
+import UserDTO from '../dto/user.dto.js';   
 
 export const issueToken = (req, res) => {
     try {
@@ -31,6 +32,7 @@ export const issueToken = (req, res) => {
         res.status(200).json({
             status: 'success',
             message: 'Login exitoso',
+            token: token,
             user: { 
                 id: user._id, 
                 email: user.email, 
@@ -46,16 +48,9 @@ export const issueToken = (req, res) => {
 
 export const current = (req, res) => {
     try {
-        const userData = {
-            id: req.user._id,
-            first_name: req.user.first_name,
-            last_name: req.user.last_name,
-            email: req.user.email,
-            age: req.user.age,
-            role: req.user.role
-        };
+        const userDTO = new UserDTO(req.user);
 
-        res.status(200).json({ status: 'success', user: userData });
+        res.status(200).json({ status: 'success', user: userDTO });
 
     } catch (error) {
         res.status(500).json({ status: 'error', error: 'Error al obtener datos de usuario' });
