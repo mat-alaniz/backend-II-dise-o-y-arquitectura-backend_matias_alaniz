@@ -4,6 +4,7 @@ import CartManager from '../managers/CartManager.js';
 import { removeProductFromCart, updateProductQuantity, updateCart, clearCart } from '../controllers/cart.controller.js';
 import { requireUser, requireCartOwner } from '../middlewares/authorization.js'; 
 import ProductManager from '../managers/ProductManager.js';
+import { passportCall } from '../utils.js';
 
 const router = express.Router();
 const cartManager = new CartManager();
@@ -43,7 +44,7 @@ router.get('/:cid', async (req, res) => {
 
 // SOLO USUARIOS:Agregar producto al carrito 
 router.post('/:cid/products/:pid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireUser,                                     
   requireCartOwner,                                
   async (req, res) => {
@@ -60,7 +61,7 @@ router.post('/:cid/products/:pid',
 
 // SOLO USUARIOS: Eliminar producto del carrito ← AGREGÁ PROTECCIÓN
 router.delete('/:cid/products/:pid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireUser,
   requireCartOwner,
   removeProductFromCart
@@ -68,7 +69,7 @@ router.delete('/:cid/products/:pid',
 
 // SOLO USUARIOS: Actualizar cantidad ← AGREGÁ PROTECCIÓN
 router.put('/:cid/products/:pid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireUser,
   requireCartOwner,
   updateProductQuantity
@@ -76,7 +77,7 @@ router.put('/:cid/products/:pid',
 
 // SOLO USUARIOS: Actualizar carrito ← AGREGÁ PROTECCIÓN
 router.put('/:cid', 
-  passport.authenticate('jwt', { session: false }), 
+  passportCall("current"), 
   requireUser,                                      
   requireCartOwner,                                 
   updateCart
@@ -84,7 +85,7 @@ router.put('/:cid',
 
 // SOLO USUARIOS: Vaciar carrito ← AGREGÁ PROTECCIÓN
 router.delete('/:cid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireUser,
   requireCartOwner,
   clearCart

@@ -83,4 +83,18 @@ passport.use("login", new LocalStrategy(
   }
 ));
 
+// Estrategia "current"
+passport.use("current", new JwtStrategy(opts, async (payload, done) => {
+  try {
+    const user = await User.findById(payload.id);
+    if (user) {
+      return done(null, user); 
+    } else {
+      return done(null, false);
+    }
+  } catch (error) {
+    return done(error, false);
+  }
+}));
+
 export default passport;

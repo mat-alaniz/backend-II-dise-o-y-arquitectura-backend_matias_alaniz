@@ -3,6 +3,7 @@ import passport from 'passport';
 import { requireAdmin } from '../middlewares/authorization.js'; 
 import ProductManager from '../managers/ProductManager.js';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
+import { passportCall } from '../utils.js';
 
 const router = Router();
 const productManager = new ProductManager();
@@ -16,21 +17,21 @@ router.get('/:pid', getProductById);
 
 // SOLO ADMIN: Crear producto
 router.post('/', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireAdmin,
   createProduct
 );
 
 // SOLO ADMIN: Actualizar producto
 router.put('/:pid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireAdmin,
   updateProduct
 );
 
 //  SOLO ADMIN: Eliminar producto
 router.delete('/:pid', 
-  passport.authenticate('jwt', { session: false }),
+  passportCall("current"),
   requireAdmin,
   deleteProduct
 );
