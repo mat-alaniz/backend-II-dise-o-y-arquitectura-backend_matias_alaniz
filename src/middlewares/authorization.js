@@ -20,7 +20,7 @@ export const requireAdmin = (req, res, next) => {
     console.error(error);
     res.status(500).json({ 
       status: "error", 
-      message: "Error interno del servidor" 
+      message: "No tienes permisos para acceder a este recurso" 
     });
   }
 };
@@ -61,7 +61,11 @@ export const requireCartOwner = (req, res, next) => {
     }
 
     const { cid } = req.params;
-    
+    //el usuario admin tiene acceso a cualquier carrito
+    if (req.user.role === "admin") {
+      return next();
+    }
+
     //Verificar si el usuario tiene carrito primero
     if (!req.user.cart) {
       return res.status(404).json({
@@ -86,4 +90,32 @@ export const requireCartOwner = (req, res, next) => {
       message: 'Error en autorización'
     });
   }
+};
+//MIDDLEWARE Para flexibilidad con múltiples roles
+export const requireRoles = (roles = []) => {
+  return (req, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "No autorizado" 
+        });
+      }
+      
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ 
+          status: "error", 
+          message: `Se requieren los siguientes roles: ${roles.join(', ')}` 
+        });
+      }
+      
+      next();
+    } catch (error) {
+      console.error("Error en requireRoles:", error);
+      res.status(500).json({ 
+        status: "error", 
+        message: "Error interno del servidor" 
+      });
+    }
+  };
 };
