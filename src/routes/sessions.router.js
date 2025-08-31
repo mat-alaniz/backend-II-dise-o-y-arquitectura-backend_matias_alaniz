@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { issueToken, current, logout } from '../controllers/sessions.controller.js';
+import { requestPasswordReset, resetPassword, validateToken } from '../controllers/auth.controller.js';
 
 const router = Router();
 
@@ -28,5 +29,11 @@ router.post('/logout',
     passport.authenticate('jwt', { session: false }),
     logout
 );
+
+router.post('/forgot-password', requestPasswordReset);
+router.post('/reset-password/:token', resetPassword);
+router.get('/validate-token/:token', validateToken);
+
+
 
 export default router;

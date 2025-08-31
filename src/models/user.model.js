@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, minlength: 6 },
     age: { type: Number, required: true, min: 18 },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' }
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null }
 }, {
     timestamps: true,
     versionKey: false

@@ -32,7 +32,7 @@ export const issueToken = (req, res) => {
         res.status(200).json({
             status: 'success',
             message: 'Login exitoso',
-            token: token,
+            token: token,// lo tenes q sacar luego
             user: { 
                 id: user._id, 
                 email: user.email, 
