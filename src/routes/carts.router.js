@@ -1,6 +1,6 @@
 import express from 'express';
 import CartManager from '../managers/CartManager.js';
-import { deleteProductFromCart, updateProductQuantity, updateCart, clearCart } from '../controllers/cart.controller.js';
+import { removeProductFromCart, updateProductQuantity, updateCart, clearCart } from '../controllers/cart.controller.js';
 // Si necesitas productManager para el endpoint de /products:
 import ProductManager from '../managers/ProductManager.js';
 
@@ -47,7 +47,7 @@ router.post('/:cid/products/:pid', async (req, res) => {
     }
 });
 
-router.delete('/:cid/products/:pid', deleteProductFromCart);
+router.delete('/:cid/products/:pid', removeProductFromCart);
 router.put('/:cid/products/:pid', updateProductQuantity);
 router.put('/:cid', updateCart);
 router.delete('/:cid', clearCart);

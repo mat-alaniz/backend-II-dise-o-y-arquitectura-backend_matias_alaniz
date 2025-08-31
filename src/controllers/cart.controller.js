@@ -1,92 +1,106 @@
-import CartManager from '../managers/CartManager.js';
-import mongoose from 'mongoose';
-const cartManager = new CartManager();
+import cartService from '../services/cart.service.js';
 
-export const deleteProductFromCart = async (req, res) => {
-    try { 
-        const { cid, pid } = req.params;
-        
-        if (!mongoose.Types.ObjectId.isValid(cid)) {
-            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
-        }
-
-        const updatedCart = await cartManager.removeProductFromCart(cid, pid);
-        if (!updatedCart) {
-            return res.status(404).json({ status: 'error', message: 'No se ha podido eliminar el producto' });
-        }
-        res.status(200).json({ status: 'success', message: 'Producto eliminado exitosamente', payload: updatedCart });
-    } catch (error) {
-        console.error('Error en deleteProductFromCart:', error);
-        res.status(500).json({ status: 'error', message: error.message || 'Error al eliminar el producto', error: process.env.NODE_ENV === 'development' ? error : null });
-    }
+// Obtener el carrito por ID
+export const getCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartService.getCartById(cid);
+    res.json({
+        status: "success",
+        cart
+    });
+  } catch (error) {
+    res.status(404).json({ status: "error", error: error.message });
+  }
 };
 
+// Agregar un producto al carrito 
+export const addProductToCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const { pid, quantity = 1 } = req.body;
+    const updatedCart = await cartService.addProductToCart(cid, pid, quantity);
+    res.json({
+        status: "success",
+        cart: updatedCart
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
+};
+
+// Remover un producto del carrito
+export const removeProductFromCart = async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const updatedCart = await cartService.removeProductFromCart(cid, pid);
+    res.json({
+        status: "success",
+        cart: updatedCart
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
+};
+
+//Actualizar cantidad de producto
 export const updateProductQuantity = async (req, res) => {
-    try {
-        const { cid, pid } = req.params;
-        const { quantity } = req.body;
-
-        if (!quantity || isNaN(quantity) || quantity <= 0) {
-            return res.status(400).json({ status: 'error', message: 'La cantidad debe ser un número positivo' });
-        }
-
-        const updatedCart = await cartManager.updateProductQuantity(cid, pid, quantity);
-
-        if (!updatedCart) {
-            return res.status(404).json({ status: 'error', message: 'No se ha podido actualizar la cantidad' });
-        }
-
-        res.status(200).json({ status: 'success', message: 'Cantidad actualizada exitosamente', payload: updatedCart });
-    } catch (error) {
-        console.error('Error en updateProductQuantity:', error);
-        res.status(500).json({ status: 'error', message: error.message || 'Error al actualizar cantidad', error: process.env.NODE_ENV === 'development' ? error : null });
-    }       
+  try {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+    
+    // Necesitamos agregar este método al service primero
+    const updatedCart = await cartService.updateProductQuantity(cid, pid, quantity);
+    res.json({
+      status: "success",
+      cart: updatedCart
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
 };
 
+//Actualizar carrito completo
 export const updateCart = async (req, res) => {
-    try {
-        const { cid } = req.params;
-        const { products } = req.body;
-
-        if (!Array.isArray(products)) {
-            return res.status(400).json({ status: 'error', message: 'Los productos deben ser un arreglo' });
-        }
-
-        if (!mongoose.Types.ObjectId.isValid(cid)) {
-            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
-        }
-
-        const updatedCart = await cartManager.updateAllCartProducts(cid, products);
-        if (!updatedCart) {
-            return res.status(404).json({ status: 'error', message: 'No se ha podido actualizar el carrito' });
-        }
-        res.status(200).json({ status: 'success', message: 'Carrito actualizado exitosamente', payload: updatedCart });
-    } catch (error) {
-        console.error('Error en updateCart:', error);
-        res.status(500).json({ status: 'error', message: error.message || 'Error al actualizar carrito', error: process.env.NODE_ENV === 'development' ? error : null });
-    }
+  try {
+    const { cid } = req.params;
+    const updateData = req.body;
+    
+    const updatedCart = await cartService.updateCart(cid, updateData);
+    res.json({
+      status: "success",
+      cart: updatedCart
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
 };
 
+// Vaciar carrito
 export const clearCart = async (req, res) => {
-    try {
-        const { cid } = req.params;
-
-        if (!mongoose.Types.ObjectId.isValid(cid)) {
-            return res.status(400).json({ status: 'error', message: 'ID de carrito no válido' });
-        }
-
-        const emptiedCart = await cartManager.clearCart(cid);
-
-        if (!emptiedCart) {
-            return res.status(404).json({ status: 'error', message: 'No se ha podido vaciar el carrito' });
-        }
-
-        res.status(200).json({ status: 'success', message: 'Carrito vaciado exitosamente', payload: emptiedCart });
-    } catch (error) {
-        console.error('Error en clearCart:', error);
-        res.status(500).json({ status: 'error', message: error.message || 'Error al vaciar carrito', error: process.env.NODE_ENV === 'development' ? error : null });
-    }
+  try {
+    const { cid } = req.params;
+    const updatedCart = await cartService.clearCart(cid);
+    res.json({
+        status: "success",
+        message: "Carrito vaciado",
+        cart: updatedCart
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
 };
 
-
-export default cartManager;
+// Obtener carrito x usuario
+export const getCartByUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const cart = await cartService.getCartByUserId(userId);
+    res.json({
+        status: "success",
+        cart
+    });
+  } catch (error) {
+    res.status(404).json({ status: "error", error: error.message });
+  }
+};

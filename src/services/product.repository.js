@@ -56,7 +56,7 @@ export class ProductService {
     try {
       return await productRepository.update(id, updateData);
     } catch (error) {
-      throw new Error(`Error updating product: ${error.message}`);
+      throw new Error(`Error al actualizar producto: ${error.message}`);
     }
   }
   //eliminar producto

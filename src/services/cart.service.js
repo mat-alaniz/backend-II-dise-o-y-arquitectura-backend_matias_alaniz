@@ -1,43 +1,41 @@
-
-import cartRepository from "../repositories/cart.repository";   
+import cartRepository from '../repositories/cart.repository.js';
 
 export class CartService {
-  //obtener el carro x Id
-
+  
+  // Obtener carrito por ID
   async getCartById(cartId) {
-  try{
-    return await cartRepository.findById(cartId);
-  } catch (error) {
-    throw new Error(`Error al obtener el carrito: ${error.message}`);
-    }
-  }
-
-  //obteenr carrito x usuario
-
-
-  async getCartByUserId(userId) {
     try {
-         let cart = await cartRepository.findByUserId(userId);
-         if (!cart) {
-            cart = await cartRepository.create({ user: userId, products: [] });
-         } return cart;
+      return await cartRepository.findById(cartId);
     } catch (error) {
       throw new Error(`Error al obtener el carrito: ${error.message}`);
     }
   }
 
-  //crear un nuevo carro
+  // Obtener carrito por usuario
+  async getCartByUserId(userId) {
+    try {
+      let cart = await cartRepository.findByUser(userId);
+      
+      if (!cart) {
+        cart = await cartRepository.create({ user: userId, products: [] });
+      }
+      
+      return cart;
+    } catch (error) {
+      throw new Error(`Error al obtener el carrito del usuario: ${error.message}`);
+    }
+  }
 
+  // Crear nuevo carrito
   async createCart(cartData) {
-    try{
-        return await cartRepository.create(cartData);
+    try {
+      return await cartRepository.create(cartData);
     } catch (error) {
       throw new Error(`Error al crear el carrito: ${error.message}`);
     }
   }
 
-  //actualizar el carro
-
+  // Actualizar carrito
   async updateCart(cartId, updateData) {
     try {
       return await cartRepository.update(cartId, updateData);
@@ -46,8 +44,7 @@ export class CartService {
     }
   }
 
-  //eliminar el carro
-
+  // Eliminar carrito
   async deleteCart(cartId) {
     try {
       return await cartRepository.delete(cartId);
@@ -56,46 +53,65 @@ export class CartService {
     }
   }
 
-  //agregar producto al carrito
-
-   async addProductToCart(cartId, productId, quantity = 1) {
+  // Agregar producto al carrito
+  async addProductToCart(cartId, productId, quantity = 1) {
     try {
       return await cartRepository.addProduct(cartId, productId, quantity);
     } catch (error) {
-      throw new Error(`Error adding product to cart: ${error.message}`);
+      throw new Error(`Error al agregar producto al carrito: ${error.message}`);
     }
   }
 
-  //remover producto del carrito
+  // Actualizar cantidad de producto 
+  async updateProductQuantity(cartId, productId, quantity) {
+    try {
+      const cart = await cartRepository.findById(cartId);
+      if (!cart) {
+        throw new Error('Carrito no encontrado');
+      }
+
+      const productItem = cart.products.find(
+        item => item.product.toString() === productId
+      );
+
+      if (productItem) {
+        productItem.quantity = quantity;
+      } else {
+        throw new Error('Producto no encontrado en el carrito');
+      }
+
+      return await cart.save();
+    } catch (error) {
+      throw new Error(`Error al actualizar la cantidad del producto: ${error.message}`);
+    }
+  }
+
+  // Remover producto del carrito
   async removeProductFromCart(cartId, productId) {
     try {
       return await cartRepository.removeProduct(cartId, productId);
     } catch (error) {
-      throw new Error(`Error removing product from cart: ${error.message}`);
+      throw new Error(`Error al remover producto del carrito: ${error.message}`);
     }
   }
 
-  //vaciar carrito
-
+  // Vaciar carrito
   async clearCart(cartId) {
     try {
-      return await cartRepository.clear(cartId);
+      return await cartRepository.clearCart(cartId);
     } catch (error) {
       throw new Error(`Error al vaciar el carrito: ${error.message}`);
     }
   }
 
-  //obtener carrito con populate completo
-
+  // Obtener carrito con populate completo
   async getPopulatedCart(cartId) {
     try {
       const cart = await cartRepository.findById(cartId);
       return cart;
     } catch (error) {
-      throw new Error(`Error getting populated cart: ${error.message}`);
+      throw new Error(`Error al obtener el carrito con populate: ${error.message}`);
     }
   }
-
 }
-
 export default new CartService();
