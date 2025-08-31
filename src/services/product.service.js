@@ -1,6 +1,14 @@
-import productRepository from "../repositories/product.repository";
+import productRepository from "../repositories/product.repository.js";
 
 export class ProductService {
+    //crear nuevo producto
+    async createProduct(productData) {
+    try {
+      return await productRepository.create(productData);
+    } catch (error) {
+      throw new Error(`Error creating product: ${error.message}`);
+    }
+  }
 
     //obtener productos x paginación
   async getProducts(limit = 10, page = 1, query = {}, sort = {}) {

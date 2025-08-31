@@ -47,7 +47,8 @@ passport.use('register', new LocalStrategy(
         last_name: req.body.last_name,
         email,
         age: req.body.age,
-        password: password
+        password: password,
+        role: req.body.role || 'user'
       });
       
       return done(null, user);
