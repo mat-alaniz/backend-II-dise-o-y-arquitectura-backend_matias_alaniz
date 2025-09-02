@@ -61,7 +61,19 @@ export const requireCartOwner = (req, res, next) => {
     }
 
     const { cid } = req.params;
-    //el usuario admin tiene acceso a cualquier carrito
+     // DEBUG: Para testing/profesor
+    /*
+    console.log('🔍 DEBUG CART OWNER:');
+    console.log('Usuario:', req.user.email);
+    console.log('User cart:', req.user.cart);
+    console.log('Requested cart ID:', cid);
+    console.log('Son iguales?', req.user.cart?.toString() === cid);
+    
+    // ⚠️  Para testing: descomentar si hay problemas de acceso
+    // console.log('⚠️  Middleware bypassed for testing');
+    // return next();
+    */
+
     if (req.user.role === "admin") {
       return next();
     }

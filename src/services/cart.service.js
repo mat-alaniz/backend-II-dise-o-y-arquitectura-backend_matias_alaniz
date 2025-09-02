@@ -1,3 +1,5 @@
+import ticketService from './ticket.service.js';
+import productRepository from '../repositories/product.repository.js';
 import cartRepository from '../repositories/cart.repository.js';
 
 export class CartService {
@@ -179,5 +181,6 @@ export class CartService {
     }
   }
 }
+
 
 export default new CartService();
