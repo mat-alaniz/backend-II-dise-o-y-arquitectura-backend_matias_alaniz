@@ -83,7 +83,7 @@ async addProduct(cartId, productId, quantity = 1) {
   }
 // remover producto del carro
 
-async addProduct(cartId, productId, quantity = 1) {
+async removeProduct(cartId, productId) {
     try {
       const cart = await Cart.findById(cartId);
       if (!cart) {
