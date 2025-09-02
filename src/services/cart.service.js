@@ -14,7 +14,7 @@ export class CartService {
   // Obtener carrito por usuario
   async getCartByUserId(userId) {
     try {
-      let cart = await cartRepository.findByUser(userId);
+      let cart = await cartRepository.findByUserId(userId);
       
       if (!cart) {
         cart = await cartRepository.create({ user: userId, products: [] });
@@ -113,5 +113,71 @@ export class CartService {
       throw new Error(`Error al obtener el carrito con populate: ${error.message}`);
     }
   }
+  // MÉTODO DE COMPRA 
+  async purchaseCart(cartId, user) {
+    try {
+        // Validar que user NO sea admin
+        if (user.role === 'admin') {
+            throw new Error('Los administradores no pueden realizar compras');
+        }
+
+        // Obtener carrito con productos populados
+        const cart = await cartRepository.findById(cartId);
+        if (!cart) {
+            throw new Error('Carrito no encontrado');
+        }
+
+        // Validar que el carrito no esté vacío
+        if (cart.products.length === 0) {
+            throw new Error('No se puede comprar un carrito vacío');
+        }
+
+        // Validar stock y calcular total
+        let totalAmount = 0;
+        const productsToPurchase = [];
+        const productsOutOfStock = [];
+
+        for (const item of cart.products) {
+            const product = item.product;
+            
+            // Validar stock
+            if (product.stock >= item.quantity) {
+                productsToPurchase.push({
+                    product: product._id,
+                    quantity: item.quantity,
+                    price: product.price
+                });
+                totalAmount += product.price * item.quantity;
+            } else {
+                productsOutOfStock.push({
+                    product: product._id,
+                    name: product.title,
+                    requested: item.quantity,
+                    available: product.stock
+                });
+            }
+        }
+
+        // Si no hay productos disponibles, error
+        if (productsToPurchase.length === 0) {
+            throw new Error('No hay productos con stock suficiente para comprar');
+        }
+
+        // Devolver resultado de la compra
+        return {
+            success: true,
+            totalAmount,
+            productsPurchased: productsToPurchase,
+            productsOutOfStock,
+            message: productsOutOfStock.length > 0 
+                ? 'Compra parcialmente exitosa' 
+                : 'Compra exitosa'
+        };
+
+    } catch (error) {
+        throw new Error(`Error al procesar la compra: ${error.message}`);
+    }
+  }
 }
+
 export default new CartService();

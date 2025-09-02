@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport'; 
 import CartManager from '../managers/CartManager.js';
-import { removeProductFromCart, updateProductQuantity, updateCart, clearCart } from '../controllers/cart.controller.js';
+import { removeProductFromCart, updateProductQuantity, updateCart, clearCart, purchaseCart } from '../controllers/cart.controller.js';
 import { requireUser, requireCartOwner } from '../middlewares/authorization.js'; 
 import ProductManager from '../managers/ProductManager.js';
 import { passportCall } from '../utils.js';
@@ -10,7 +10,7 @@ const router = express.Router();
 const cartManager = new CartManager();
 const productManager = new ProductManager();
 
-//Crear carrito (cualquiera puede crear un carrito)
+//Crear carrito 
 router.post('/', async (req, res) => {
     try {
         const newCart = await cartManager.createCart();
@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Ver todos los carritos (pero con cuidado con la info sensible)
+// Ver todos los carritos 
 router.get('/', async (req, res) => {
     try {
         const carts = await cartManager.getCarts();
@@ -29,7 +29,8 @@ router.get('/', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error al obtener los carritos', details: error.message });
     }
 });
-// Ver carrito por ID (pero con información limitada)
+
+// Ver carrito por ID 
 router.get('/:cid', async (req, res) => {
     try {
         const cart = await cartManager.getCartById(req.params.cid);
@@ -42,7 +43,7 @@ router.get('/:cid', async (req, res) => {
     }
 });
 
-// SOLO USUARIOS:Agregar producto al carrito 
+//Agregar producto al carrito 
 router.post('/:cid/products/:pid', 
   passportCall("current"),
   requireUser,                                     
@@ -59,7 +60,7 @@ router.post('/:cid/products/:pid',
     }
 });
 
-// SOLO USUARIOS: Eliminar producto del carrito ← AGREGÁ PROTECCIÓN
+//Eliminar producto del carrito
 router.delete('/:cid/products/:pid', 
   passportCall("current"),
   requireUser,
@@ -67,7 +68,7 @@ router.delete('/:cid/products/:pid',
   removeProductFromCart
 );
 
-// SOLO USUARIOS: Actualizar cantidad ← AGREGÁ PROTECCIÓN
+//Actualizar cantidad
 router.put('/:cid/products/:pid', 
   passportCall("current"),
   requireUser,
@@ -75,7 +76,7 @@ router.put('/:cid/products/:pid',
   updateProductQuantity
 );
 
-// SOLO USUARIOS: Actualizar carrito ← AGREGÁ PROTECCIÓN
+//Actualizar carrito
 router.put('/:cid', 
   passportCall("current"), 
   requireUser,                                      
@@ -83,7 +84,7 @@ router.put('/:cid',
   updateCart
 );
 
-// SOLO USUARIOS: Vaciar carrito ← AGREGÁ PROTECCIÓN
+// Vaciar carrito
 router.delete('/:cid', 
   passportCall("current"),
   requireUser,
@@ -91,7 +92,16 @@ router.delete('/:cid',
   clearCart
 );
 
-// PÚBLICO: Vista de productos (para el frontend)
+
+// Finalizar compra
+router.post('/:cid/purchase', 
+  passportCall("current"),
+  requireUser,
+  requireCartOwner,
+  purchaseCart // ← Controlador de compra
+);
+
+//Vista de productos
 router.get('/products', async (req, res) => {
     try {
         const productos = await productManager.getProducts();

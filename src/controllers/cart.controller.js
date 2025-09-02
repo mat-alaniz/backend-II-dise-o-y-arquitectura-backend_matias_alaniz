@@ -104,3 +104,19 @@ export const getCartByUser = async (req, res) => {
     res.status(404).json({ status: "error", error: error.message });
   }
 };
+
+//finalizar compra del carrito
+export const purchaseCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const user = req.user;
+    const purchaseResult = await cartService.purchaseCart(cid, user);
+    res.json({
+      status: "success",
+      message: purchaseResult.message,
+      data: purchaseResult
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", error: error.message });
+  }
+};
