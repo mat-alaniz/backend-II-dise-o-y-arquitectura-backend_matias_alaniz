@@ -3,6 +3,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
+import cartRepository from '../repositories/cart.repository.js';
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
@@ -42,6 +43,8 @@ passport.use('register', new LocalStrategy(
         return done(null, false, { message: 'El email ya está registrado' });
       }
 
+       const newCart = await cartRepository.create({ products: [] });
+
       const user = await User.create({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -49,7 +52,7 @@ passport.use('register', new LocalStrategy(
         age: req.body.age,
         password: password,
         role: req.body.role || 'user',
-        cart: req.body.cart
+        cart: newCart._id
       });
       
       return done(null, user);

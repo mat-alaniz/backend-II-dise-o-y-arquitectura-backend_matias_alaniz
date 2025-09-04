@@ -2,6 +2,18 @@
 import Cart from '../models/cartModel.js';
 
 export class CartRepository {
+  // crear carrito
+  async create(cartData) {
+    try {
+      const cart = new Cart(cartData);
+      return await cart.save();
+    } catch (error) {
+      throw new Error(`Error al crear carrito: ${error.message}`);
+    }
+  }
+
+
+
  // buscar carrito x Id
 async findById(id) {
     try{
