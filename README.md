@@ -101,6 +101,8 @@ npm install
 PORT=8081
 MONGO_URI="mongodb+srv://matiasalaniz:kcncNKnkNklkAKNnbu@cluster0.djc6pej.mongodb.net/caiDB?retryWrites=true&w=majority&appName=Cluster0"
 JWT_SECRET="miClaveSuperSecreta"
+EMAIL_USER=desarrollobackendmate@gmail.com
+EMAIL_PASS=cprnyzbgnidnaiic
 
 # Iniciar servidor en desarrollo
  · npm start
