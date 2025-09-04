@@ -138,6 +138,40 @@ POST	/api/carts	                    Crea un nuevo carrito
 POST	/api/carts/:cid/product/:pid	Agrega un producto a un carrito
 
 
+### Sistema de Autenticación y Autorización
+- **Registro y Login** con JWT
+- **Middleware de autorización** por roles (admin/user)
+- **Ruta /current** con DTO para evitar enviar datos sensibles
+- **Recuperación de contraseña** con email y tokens expirables
+
+### Sistema de Carritos y Compras  
+- **Carritos por usuario** con validación de ownership
+- **Proceso de compra completo** con validación de stock
+- **Generación de tickets** con: código único, fecha, total, detalle
+- **Manejo de compras completas/incompletas**
+
+### Arquitectura Profesional
+- **Patrón Repository** para persistencia de datos
+- **DTOs** para transferencia segura de datos
+- **Services** con lógica de negocio
+- **Variables de entorno** para configuración
+
+## 📌 Endpoints Importantes
+
+### 🎫 Compra y Tickets
+`POST /api/carts/:cid/purchase` - Finalizar compra y generar ticket
+
+### 🔐 Autenticación  
+`POST /api/sessions/forgot-password` - Solicitar reset de password
+`POST /api/sessions/reset-password/:token` - Resetear password
+`GET /api/sessions/current` - Usuario actual (con DTO)
+
+### 👮‍♂️ Admin Only
+`POST /api/products` - Crear producto (solo admin)
+`PUT /api/products/:pid` - Actualizar producto (solo admin)  
+`DELETE /api/products/:pid` - Eliminar producto (solo admin)
+
+
 ## Autor
 
 Matias Jesus Alaniz
